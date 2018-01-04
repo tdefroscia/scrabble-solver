@@ -1,3 +1,5 @@
+from scrabble_solving_engine.GADDAG import GADDAG
+
 class Game(object):
     tile_points = {'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4,
                    'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3,
@@ -36,13 +38,19 @@ class Game(object):
 
     def validate_move(self, move):
         # Check that all tiles are in valid-locations
-        # make sure tile is not being placed on a covered square
+        # make sure tiles are not being placed on a covered square
+        for tile in move:
+
         # make sure tile is not being placed out of bounds
         # make sure tiles are all in a line (vertical or horizontal)
         # Check that all words formed are valid
         return move
 
+    def check_locations(self, move):
+        None
+
     def check_lexicon(self, word):
+
         None
 
     def check_horizontal(self, move):
@@ -53,3 +61,17 @@ class Game(object):
 
     def update_board(self, move):
         None
+
+class Board_Position(object):
+    def __init__(self, letter, x, y):
+        self.letter = letter
+        self.x = x
+        self.y = y
+
+fd = open('dictionary.txt', 'r')
+words_list = fd.read().split('\n')
+fd.close()
+lexicon = Gaddag()
+
+for word in words_list:
+    lexicon.add_word(word)
