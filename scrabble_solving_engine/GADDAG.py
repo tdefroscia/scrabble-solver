@@ -4,27 +4,52 @@ class GADDAG(object):
         self.initialState = self.root_arc.next_state
         self.create_gaddag(file_name)
 
+    """
+    Method used in initialization. Creates GADDAG from words in specified file.
+    Expected format of the file is one word per line.
+    
+    Parameters:
+        file_name: string with correct filepath
+        
+    Returns:
+        Nothing
+    """
+
     def create_gaddag(self, file_name):
         fd = open(file_name, 'r')
         words_list = fd.read().split('\n')
         fd.close()
 
         for word in words_list:
-            self.add_word(word)
+            self.add(word)
 
-    def add_word(self, word):
+    """
+    Adds a single word to the GADDAG and also performs partial minimization
+    in order to be more space efficient.
+    
+    Parameters:
+        word: string representing word that needs to be added
+    
+    Returns:
+        Nothing
+    """
+
+    def add(self, word):
         n = len(word)
         st = self.initialState
 
+        # creates path for word[n-1],word[n-2],...,word[0]
         for i in range(n - 1, 1, -1):
             st = add_arc(st, word[i])
         add_final_arc(st, word[1], word[0])
 
+        # creates path for word[n-2],word[n-3],...word[0],'|',word[n]
         st = self.initialState
         for i in range(n - 2, -1, -1):
             st = add_arc(st, word[i])
         st = add_final_arc(st, '|', word[n - 1])
 
+        # creates remaining paths and also performs partial minimization
         for m in range(n - 3, -1, -1):
             forceSt = st
             st = self.initialState
