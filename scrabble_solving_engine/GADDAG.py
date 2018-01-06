@@ -59,6 +59,10 @@ class GADDAG(object):
             force_arc(st, word[m + 1], forceSt)
 
 
+def next_arc(arc, letter):
+    st = arc.next_state
+    return st.get_arc(letter)
+
 """
 Adds an arc from st for ch (if one does not already exist) and resets st to
 the node this arc leads to.
