@@ -1,16 +1,16 @@
 class GADDAG(object):
     def __init__(self, file_name):
-        self.root_arc = Arc("", GaddagState())
+        self.root_arc = Arc("", GaddagState(), False)
         self.initialState = self.root_arc.next_state
         self.create_gaddag(file_name)
 
     """
     Method used in initialization. Creates GADDAG from words in specified file.
     Expected format of the file is one word per line.
-    
+
     Parameters:
         file_name: string with correct filepath
-        
+
     Returns:
         Nothing
     """
@@ -26,10 +26,10 @@ class GADDAG(object):
     """
     Adds a single word to the GADDAG and also performs partial minimization
     in order to be more space efficient.
-    
+
     Parameters:
         word: string representing word that needs to be added
-    
+
     Returns:
         Nothing
     """
@@ -70,7 +70,7 @@ the node this arc leads to.
 Parameters:
     st: GaddagState to which arc is added
     ch: Character corresponding to the new arc
-    
+
 Returns:
     The newest state (or the one which already existed)
 """
@@ -79,7 +79,7 @@ Returns:
 def add_arc(st, ch):
     arc = st.get_arc(ch)
     if arc == 0:
-        arc = Arc(ch, GaddagState())
+        arc = Arc(ch, GaddagState(), False)
         st.arcs.append(arc)
         st.letter_set.add(ch)
     return arc.next_state
@@ -101,10 +101,12 @@ Returns:
 def add_final_arc(st, c1, c2):
     arc = st.get_arc(c1)
     if arc == 0:
-        arc = Arc(c1, GaddagState())
+        arc = Arc(c1, GaddagState(), False)
         st.arcs.append(arc)
         st.letter_set.add(c1)
-    arc.next_state.letter_set.add(c2)
+    next_state = arc.next_state
+    next_state.letter_set.add(c2)
+    next_state.arcs.append(Arc(c2, GaddagState(), True))
     return arc.next_state
 
 
@@ -127,13 +129,14 @@ def force_arc(st, ch, fst):
         if arc.next_state != fst:
             Exception("An arc from st for ch already exists")
     else:
-        st.arcs.append(Arc(ch, fst))
+        st.arcs.append(Arc(ch, fst, False))
 
 
 class Arc(object):
-    def __init__(self, letter, next_state):
+    def __init__(self, letter, next_state, is_end):
         self.letter = letter
         self.next_state = next_state
+        self.is_end = is_end
 
 
 class GaddagState(object):

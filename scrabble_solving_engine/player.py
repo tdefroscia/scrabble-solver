@@ -13,7 +13,7 @@ Attributes:
     lexicon: gaddag representing the entire scrabble dictionary
     empty_cell: hash set of representation of empty tiles on the board
     anchors: list of Board_Positions of letters adjacent to tiles already on the board
-    
+
 Methods:
     The general structure of this algorithm is this:
     1) From the present state of the gameboard, find all anchor squares
@@ -22,13 +22,13 @@ Methods:
        anchors + rack + gaddag + board -> moves (find_all_moves)
     3) From all the moves and the board, we pick the best move.
        moves + board -> move
-    
+
     get_anchors:
-    
+
     find_all_moves:
-    
+
     gen:
-    
+
     go_on:
 """
 class Player(object):
@@ -94,7 +94,9 @@ class Player(object):
             for i in range(len(rack)):
                 # get allowed letters on the square
                 if rack[i] == ' ':
-
+                    s = 'abcdefghijklmnopqrstuvwxyz'
+                    for c in s:
+                        self.go_on(pos, c, word, rack, next_arc(arc, c), arc)
                 if rack[i] != '':
                     next_rack = rack
                     next_rack[i] = ''
@@ -102,7 +104,6 @@ class Player(object):
 
 
     def go_on(self, leftmost, pos, letter, word, rack, new_arc, old_arc):
-
 
 class Move(object):
     def __init__(self, start_pos, word, horizontal):
