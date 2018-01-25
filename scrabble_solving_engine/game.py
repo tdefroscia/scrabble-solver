@@ -1,5 +1,6 @@
 from scrabble_solving_engine.GADDAG import GADDAG
 
+
 class Game(object):
     tile_points = {'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4,
                    'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3,
@@ -35,43 +36,60 @@ class Game(object):
                            ['0', '@', '0', '0', '0', '3', '0', '0', '0', '3', '0', '0', '0', '@', '0'],
                            ['*', '0', '0', '2', '0', '0', '0', '*', '0', '0', '0', '2', '0', '0', '*']]
         self.lexicon = lexicon
+        self.valid_letters = [[{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+                                'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'} for i in range(15)] for j in range(15)]
 
-    def validate_move(self, move):
-        # Check that all tiles are in valid-locations
-        # make sure tiles are not being placed on a covered square
-        for tile in move:
+    def cross_check(self, move):
+        for pos in move:
+            if pos.y != 0:
+                if self.game_board[pos.x][pos.y - 1] in self.empty_cell:
+                    self.update_valid_letters(pos.x, pos.y - 1, pos.letter)
+            if pos.y != 14:
+                if self.game_board[pos.x][pos.y + 1] in self.empty_cell:
+                    self.update_valid_letters(pos.x, pos.y + 1, pos.letter)
+            if pos.x != 0:
+                if self.game_board[pos.x - 1][pos.y] in self.empty_cell:
+                    self.update_valid_letters(pos.x - 1, pos.y, pos.letter)
+            if pos.x != 14:
+                if self.game_board[pos.x + 1][pos.y] in self.empty_cell:
+                    self.update_valid_letters(pos.x + 1, pos.y, pos.letter)
 
-        # make sure tile is not being placed out of bounds
-        # make sure tiles are all in a line (vertical or horizontal)
-        # Check that all words formed are valid
-        return move
+    def update_valid_letters(self, row, col, letter):
+        allowed_letters = self.lexicon.initialState.get_arc(letter).next_state.letter_set
 
-    def check_locations(self, move):
-        None
+        for ch in self.valid_letters[row][col]:
+            if ch not in allowed_letters:
+                self.valid_letters[row][col].remove(ch)
 
-    def check_lexicon(self, word):
+    def make_move(self, move):
+        self.check_valid_move(move)
+        self.make_move(move)
+        self.cross_check(move)
+        pass
 
-        None
+    def check_valid_move(self, move):
+        # Check that move is a word in the lexicon
+        # Check that move is in valid board positions
+        # Check that move is in valid_letters
+        pass
 
-    def check_horizontal(self, move):
-        None
 
-    def check_vertical(self, move):
-        None
-
-    def update_board(self, move):
-        None
-
-class Board_Position(object):
+class BoardPosition(object):
     def __init__(self, letter, x, y):
         self.letter = letter
         self.x = x
         self.y = y
 
-fd = open('dictionary.txt', 'r')
-words_list = fd.read().split('\n')
-fd.close()
-lexicon = Gaddag()
 
-for word in words_list:
-    lexicon.add_word(word)
+def main():
+    fd = open('dictionary.txt', 'r')
+    words_list = fd.read().split('\n')
+    fd.close()
+    lexicon = GADDAG()
+
+    for word in words_list:
+        lexicon.add_word(word)
+
+
+if __name__ == '__main__':
+    main()
