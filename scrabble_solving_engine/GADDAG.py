@@ -105,9 +105,13 @@ def add_final_arc(st, c1, c2):
         st.arcs.append(arc)
         st.letter_set.add(c1)
     next_state = arc.next_state
-    next_state.letter_set.add(c2)
-    next_state.arcs.append(Arc(c2, GaddagState(), True))
-    return arc.next_state
+    next_arc = next_state.get_arc(c2)
+    if next_arc == 0:
+        next_state.letter_set.add(c2)
+        next_state.arcs.append(Arc(c2, GaddagState(), True))
+    else:
+        next_arc.is_end = True
+    return next_state
 
 
 """
